@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(0);
 $pattern = "/\d{2}\/\d{2}\/\d{2}/";
 
 $mysqli = new mysqli("localhost","root","root","scotchbox");
@@ -13,27 +13,19 @@ $sql  = "SELECT * FROM sweetwater_test ";
 
 $res = $mysqli->query($sql);
 
-//print_r($row = $res->fetch_array());
 $all_comments =  array();
 while($row  = $res->fetch_array()){
-    //$all_comments['id'] = $row['orderid'];
-    //$string = implode(" ",$row['comments']);
-    if (preg_match($pattern,$row['comments'],$match)){
-        //print $match[0];exit;
-//        $sql = "UPDATE `sweetwater_test`  SET `shipdate_expected`= DATE_FORMAT($match[0],'%M %d %Y')  ";
-//        $res = $mysqli->query($sql);
+    preg_match($pattern,$row['comments'],$match);
+    if(($match[0] !== null)){
+        $date = $match[0];
+        $sql = "UPDATE `sweetwater_test`  SET `shipdate_expected`= STR_TO_DATE('".$date."', '%m/%d/%yy') WHERE `orderid` = ".$row['orderid']."  ";
+        $res1 = $mysqli->query($sql);
     }
 
     $all_comments[] = $row['comments'];
 
 }
-//print_r($all_comments);
 
-//- Comments about candy
-//- Comments about call me / don't call me
-//- Comments about who referred me
-//- Comments about signature requirements upon delivery
-//- Miscellaneous comments (everything else)
 $candy = array();
 $call_me = array();
 $referred_me = array();
@@ -43,8 +35,6 @@ foreach($all_comments as $comment){
 
     if(preg_match('/candy/i',$comment,$match)){
         $candy[]=$comment;
-        //print $match[0];
-	//exit;
     }
     elseif (preg_match('/call me/i',$comment)){
         $call_me[]=$comment;
@@ -58,11 +48,35 @@ foreach($all_comments as $comment){
     else{
         $misc[]= $comment;
     }
-    //print_r($candy);
-    //print_r($call_me);
+
 }
-print_r ($candy);
-print_r ($call_me);
-print_r ($referred_me);
-print_r ($signature);
-print_r ($misc);
+echo "Candy Messages----";
+echo " <br />";
+foreach($candy as $candy){
+    echo $candy."<br />";
+}
+echo " <br />";
+echo "Callme Messages----";
+echo " <br />";
+foreach($call_me as $call_me){
+    echo $call_me."<br />";
+}
+echo " <br />";
+echo "Referred Messages----";
+echo " <br />";
+foreach($referred_me as $referred_me) {
+    echo $referred_me."<br />";
+}
+echo " <br />";
+echo "Signature Messages----";
+echo " <br />";
+foreach($signature as $signature) {
+    echo $signature."<br />";
+}
+echo " <br />";
+echo "Misc Messages----";
+echo " <br />";
+foreach($misc as $misc) {
+    echo $misc."<br />";
+}
+
