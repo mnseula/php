@@ -42,7 +42,7 @@ foreach($all_comments as $comment){
     elseif (preg_match('/referred me/i',$comment)){
         $referred_me[]=$comment;
     }
-    elseif (preg_match('/signature requirements upon delivery/i',$comment)){
+    elseif (preg_match('/signature/i',$comment)){
         $signature[]= $comment;
     }
     else{
